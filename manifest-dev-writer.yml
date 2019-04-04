@@ -1,0 +1,11 @@
+---
+applications:
+- name: test-redis-cache-writer
+  memory: 1G
+  instances: 1
+  host: test-redis-cache-writer
+  domains:
+  - apps.sea.preview.pcf.manulife.com
+  path: target/test-redis-cache-0.0.1.jar
+  services:
+  - redis-cache-service
