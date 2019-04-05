@@ -51,7 +51,7 @@ public class TestRedisCacheApplication {
 					LOGGER.info("response: {}", responseEntity.getBody().toString());
 				}
 				LOGGER.info("waiting for next invocation cycle");
-				Thread.sleep(10000);
+				Thread.sleep(30000);
 			}
 		};
 	}
