@@ -47,7 +47,11 @@ public class TestRedisCacheController {
 
     @GetMapping(path="/cache/find")
     public @ResponseBody CacheEntity findCacheById(@RequestParam String endpoint) {
+        return cacheService.findById(endpoint);
+    }
 
+    @GetMapping(path="/cache/refresh")
+    public @ResponseBody String invokeCacheUpdate() {
         try {
             String authHeader = "Basic " + new String(Base64.encodeBase64("admin:password".getBytes(Charset.forName("US-ASCII"))));
 
@@ -60,7 +64,8 @@ public class TestRedisCacheController {
 
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 
-            URI uri = URI.create("http://localhost:9393/tasks/executions");
+            //URI uri = URI.create("http://localhost:9393/tasks/executions");
+            URI uri = URI.create("https://test-spring-dataflow-server.apps.sea.preview.pcf.manulife.com/tasks/executions");
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     uri,
@@ -72,13 +77,13 @@ public class TestRedisCacheController {
             if (statusCode == HttpStatus.CREATED) {
                 String result = responseEntity.getBody();
                 LOGGER.info("JOB ID submitted: {}", result);
+                return result;
             }
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        return cacheService.findById(endpoint);
+        return "-1"; // refresh cache operation not initiated!
     }
-
 }
