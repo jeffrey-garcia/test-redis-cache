@@ -64,8 +64,8 @@ public class TestRedisCacheController {
 
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 
-            URI uri = URI.create("http://localhost:9393/tasks/executions");
-//            URI uri = URI.create("https://test-spring-dataflow-server.apps.sea.preview.pcf.manulife.com/tasks/executions");
+//            URI uri = URI.create("http://localhost:9393/tasks/executions");
+            URI uri = URI.create("https://test-spring-dataflow-server.apps.sea.preview.pcf.manulife.com/tasks/executions");
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     uri,
