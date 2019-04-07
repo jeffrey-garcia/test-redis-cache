@@ -76,7 +76,7 @@ public class TestRedisCacheController {
             HttpStatus statusCode = responseEntity.getStatusCode();
             if (statusCode == HttpStatus.CREATED) {
                 String result = responseEntity.getBody();
-                LOGGER.info("JOB ID submitted: {}", result);
+                LOGGER.info("TASK SUBMITTED, EXECUTION ID: {}", result);
                 return result;
             }
 
