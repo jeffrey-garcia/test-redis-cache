@@ -16,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class TestRedisCacheApplication {
@@ -37,22 +39,32 @@ public class TestRedisCacheApplication {
 	public CommandLineRunner insertDataToCache(CacheService cacheService) {
 		return (args) -> {
 			cacheService.deleteAll();
-			cacheService.save(new CacheEntity("test1-key", new Date().toString()));
-			cacheService.save(new CacheEntity("test2-key", new Date().toString()));
-			cacheService.save(new CacheEntity("test3-key", new Date().toString()));
-			cacheService.save(new CacheEntity("test4-key", new Date().toString()));
+//			cacheService.save(new CacheEntity("test1-key", new Date().toString()));
+//			cacheService.save(new CacheEntity("test2-key", new Date().toString()));
+//			cacheService.save(new CacheEntity("test3-key", new Date().toString()));
+//			cacheService.save(new CacheEntity("test4-key", new Date().toString()));
 
 			RestTemplate restTemplate = rest();
 			String port = environment.getProperty("local.server.port");
 
-			while(true) {
-				for (int i=0;i<5; i++) {
-					ResponseEntity<?> responseEntity = restTemplate.getForEntity(URI.create("http://localhost:" + port + "/cache/refresh"), String.class);
-					LOGGER.info("response: {}", responseEntity.getBody().toString());
-				}
-				LOGGER.info("waiting for next invocation cycle");
-				Thread.sleep(30000);
-			}
+            final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+            executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    while(true) {
+                        for (int i=0;i<20; i++) {
+                            ResponseEntity<?> responseEntity = restTemplate.getForEntity(URI.create("http://localhost:" + port + "/cache/refresh"), String.class);
+                            LOGGER.info("response: {}", responseEntity.getBody().toString());
+                        }
+                        LOGGER.info("waiting for next invocation cycle");
+                        try {
+                            Thread.sleep(45000);
+                        } catch (InterruptedException e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            }, 3, TimeUnit.MINUTES);
 		};
 	}
 
